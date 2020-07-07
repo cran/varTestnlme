@@ -10,14 +10,14 @@
 varTest(
   m1,
   m0,
-  control = list(M = 5000),
+  control = list(M = 5000, parallel = T, nbcores = 1, B = 1000),
   pval.comp = "bounds",
   fim = "extract"
 )
 }
 \arguments{
-\item{m1}{a fit of the model under H1, obtained from \code{\link[nlme]{nlme}}, \code{\link[lme4]{lme4}}
-or \code{\link[saemix]{saemix}}}
+\item{m1}{a fit of the model under H1, obtained from \code{nlme}, \code{lme4}
+or \code{saemix}}
 
 \item{m0}{a fit of the model under H0, obtained from the same package as \code{m0}}
 
@@ -51,6 +51,9 @@ the default behaviour of the function is to provide bounds on the exact p-value,
 to decide whether to reject or not the null hypothesis. This is triggered by the option \code{pval.comp="bounds"}.
 To compute an approximation of the exact p-value, one should use the option \code{pval.comp="approx"} or \code{pval.comp="both"}.
 
+When \code{pval.comp="approx"} or \code{pval.comp="both"}, the weights of th chi-bar-square distribution are computed and thus
+
+
 The \code{control} argument controls the options for chi-bar-square weights computation. It is a list with the
 following elements: \code{M} the size of the Monte Carlo simulation, \code{parallel} a boolean for parallel computing
 and \code{nbcores} the number of cores to be used in case of parallel computing. Default is \code{M=5000}, \code{parallel=FALSE}
@@ -58,17 +61,16 @@ and \code{nbcores=1}.
 }
 \examples{
 # load nlme package and example dataset
-library(nlme)
-data(Orthodont)
+library(lme4)
+data(Orthodont, package = "nlme")
 
 # fit the two models under H1 and H0
-lm1.h1.nlme <- lme(distance ~ 1 + Sex + age + age*Sex, random = ~ 1 + age | Subject, 
-data = Orthodont, method = "ML")
-lm1.h0.nlme <- lme(distance ~ 1 + Sex + age + age*Sex, random = ~ 1 | Subject, 
-data = Orthodont, method = "ML")
+lm1.h1.lme4 <- lmer(distance ~ 1 + Sex + age + age*Sex + 
+(0 + age | Subject), data = Orthodont, REML = FALSE)
+lm1.h0.lme4 <- lm(distance ~ 1 + Sex + age + age*Sex, data = Orthodont)
 
 # compare them (order is important: m1 comes first)
-varTest(lm1.h1.nlme,lm1.h0.nlme)
+varTest(lm1.h1.lme4,lm1.h0.lme4,pval.comp="bounds")
 
 }
 \references{

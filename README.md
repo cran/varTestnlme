@@ -1,6 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![](https://www.r-pkg.org/badges/version/varTestnlme)](https://CRAN.R-project.org/package=varTestnlme)
+
 # varTestnlme
 
 [varTestnlme](https://baeyc.github.io/varTestnlme/index.html) implements
@@ -30,37 +32,46 @@ mixed effects models.  135:107–122 (2019),
 
 ## Installation
 
+Install from CRAN:
+
+``` r
+install.packages("varTestnlme")
+```
+
 Install the development version from Github:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("baeyc/varTestnlme")
+#devtools::install_github("baeyc/varTestnlme")
+
+devtools::load_all()
 ```
 
 ## Example
 
-``` r
-# First, fit models from your preferred mixed-effects models package
-library(nlme)
-fm1Indom.lis <- nlsList(conc ~ SSbiexp(time, A1, lrc1, A2, lrc2),data = Indometh)
-m1 <- nlme(fm1Indom.lis,random = pdDiag(A1 + lrc1 + A2 + lrc2 ~ 1))
-m0 <- nlme(fm1Indom.lis,random = pdDiag(A1 + lrc1 ~ 1))
+An example using the `nlme` package.
 
-# Then, simply use the varTest function to compare the two models
-# It will automatically detect the covariance structures
-varTest(m1,m0)
+``` r
+library(nlme)
+data("Orthodont")
+
+# using nlme, with correlated slope and intercept
+m1 <- lme(distance ~ 1 + Sex + age + age*Sex, random = pdSymm(Subject ~ 1 + age), data = Orthodont, method = "ML")
+m0 <- lme(distance ~ 1 + Sex + age + age*Sex, random = ~ 1 | Subject, data = Orthodont, method = "ML")
+
+vt <- varTest(m1,m0)
 #> Variance components testing in mixed-effects models
 #> (models fitted using the nlme package)
-#> 
-#> Testing that the variances of A2 and lrc2 are null
-#> model under H1: list(A1 ~ 1, lrc1 ~ 1, A2 ~ 1, lrc2 ~ 1) (fixed effects) , structure(list(Subject = structure(c(3.43637993576256, 2.44739674232125, 2.05693983560385, 1.96340665027553), formula = structure(list(A1 ~ 1, lrc1 ~ 1, A2 ~ 1, lrc2 ~ 1), class = "listForm"), Dimnames = list(c("A1", "lrc1", "A2", "lrc2"), c("A1", "lrc1", "A2", "lrc2")), class = c("pdDiag", "pdMat"))), settings = c(0, 1, 0, 1), class = "reStruct") (random effects)
-#> model under H0: list(A1 ~ 1, lrc1 ~ 1, A2 ~ 1, lrc2 ~ 1) (fixed effects) , structure(list(Subject = structure(c(3.43637993576256, 2.44739674232125), formula = structure(list(A1 ~ 1, lrc1 ~ 1), class = "listForm"), Dimnames = list(c("A1", "lrc1"), c("A1", "lrc1")), class = c("pdDiag", "pdMat"))), settings = c(0, 1, 0, 1), class = "reStruct") (random effects)
+#> Testing that the variance of age is null
+#> model under H1: distance ~ 1 + Sex + age + age * Sex  (fixed effects),  pdSymm(Subject ~ 1 + age)  (random effects)
+#> model under H0: distance ~ 1 + Sex + age + age * Sex  (fixed effects),  ~1 | Subject  (random effects)
 #> 
 #> Likelihood ratio test statistics: 
-#>  LRT =  4.5608 
+#>  LRT =  0.83311 
 #> 
-#> Limiting distribution: 
-#> mixture of 3 chi-bar-square distributions with degrees of freedom 0, 1, 2 
-#> 
-#> lower-bound for p-value: 0.016356  upper bound for p-value: 0.067476
+#> Limiting distribution:
+#> mixture of 2 chi-bar-square distributions with degrees of freedom 1, 2
+#> lower-bound for p-value: 0.51035  upper bound for p-value: 0.51035
 ```
+
+It works similarly with lme4 package or saemix.
