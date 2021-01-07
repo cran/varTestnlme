@@ -14,30 +14,92 @@
 
 <title>Get started</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -46,9 +108,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -301,116 +363,227 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(varTestnlme)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(varTestnlme)</span></code></pre></div>
 <p>The <strong>varTesnlme</strong> package is very easy to use. Below are small examples on how to run it for linear, generalized linear and nonlinear mixed-effect models.</p>
 <p>Mixed-effect models can be run using <a href="https://CRAN.R-project.org/package=nlme">nlme</a> or <a href="https://CRAN.R-project.org/package=lme4">lme4</a>, but also using <a href="https://CRAN.R-project.org/package=saemix">saemix</a>. <strong>varTestnlme</strong> can be used to compare two nested models using likelihood ratio tests, where the variance of at least one random effect is tested equal to 0. Fixed effects can also be tested simultaneously, as well as covariances.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Load the packages</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">library</span>(nlme)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">library</span>(lme4)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw">library</span>(saemix)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the packages</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(saemix)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(EnvStats)</span></code></pre></div>
 <div id="linear-models" class="section level2">
 <h2>Linear models</h2>
 <p>Here we focus on models run using <strong>lme4</strong> and <strong>nlme</strong>, but <strong>saemix</strong> can also be used.</p>
 <div id="case-1-testing-the-variance-of-one-random-effect" class="section level3">
 <h3>Case 1 : testing the variance of one random effect</h3>
-<p>We illustrate the results on the <strong>Orthodont</strong> dataset, which is part of the <strong>nlme</strong> package. We are interested in modelling the distance between the pituitary annd the pterygomaxillary fissure (in mm) as a function of age, in 27 children. We will fit a random slope and random intercept model, and test whether the slope is random or not.</p>
+<p>We illustrate the results on the <strong>Orthodont</strong> dataset, which is part of the <strong>nlme</strong> package. We are interested in modeling the distance between the pituitary and the pterygomaxillary fissure (in mm) as a function of age, in 27 children. We will fit a random slope and random intercept model, and test whether the slope is random or not.</p>
 <p>We first need to fit the two nested models: the full model corresponding to <span class="math inline">\(H_1\)</span> and the null model corresponding to <span class="math inline">\(H_0\)</span>, where there is no random effect associated to <code>age</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">data</span>(<span class="st">&quot;Orthodont&quot;</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co"># using nlme, with correlated slope and intercept</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">m1.nlme &lt;-<span class="st"> </span><span class="kw">lme</span>(distance <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>Sex <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>age<span class="op">*</span>Sex, <span class="dt">random =</span> <span class="kw">pdDiag</span>(Subject <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>age), <span class="dt">data =</span> Orthodont, <span class="dt">method =</span> <span class="st">&quot;ML&quot;</span>)</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">m0.nlme &lt;-<span class="st"> </span><span class="kw">lme</span>(distance <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>Sex <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>age<span class="op">*</span>Sex, <span class="dt">random =</span> <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Subject, <span class="dt">data =</span> Orthodont, <span class="dt">method =</span> <span class="st">&quot;ML&quot;</span>)</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co"># using lme4, with correlated slope and intercept</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8">m1.lme4 &lt;-<span class="st"> </span><span class="kw">lmer</span>(distance <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>Sex <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>age<span class="op">*</span>Sex <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>age <span class="op">|</span><span class="st"> </span>Subject), <span class="dt">data =</span> Orthodont, <span class="dt">REML =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
-<pre><code>#&gt; Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
-#&gt; Model failed to converge with max|grad| = 0.0464695 (tol = 0.002, component 1)</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">m0.lme4 &lt;-<span class="st"> </span><span class="kw">lmer</span>(distance <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>Sex <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>age<span class="op">*</span>Sex <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Subject), <span class="dt">data =</span> Orthodont, <span class="dt">REML =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
-<p>Now we can run the likelihood ratio test using the <strong>varTestnlme</strong> package.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">vt1.nlme &lt;-<span class="st"> </span><span class="kw">varTest</span>(m1.nlme,m0.nlme)</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">vt1.lme4 &lt;-<span class="st"> </span><span class="kw">varTest</span>(m1.lme4,m0.lme4)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Orthodont&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># using nlme, with correlated slope and intercept</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>m1.nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">random =</span> <span class="fu">pdSymm</span>(Subject <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> age), <span class="at">data =</span> Orthodont, <span class="at">method =</span> <span class="st">&quot;ML&quot;</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>m0.nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex, <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Subject, <span class="at">data =</span> Orthodont, <span class="at">method =</span> <span class="st">&quot;ML&quot;</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># using lme4, with correlated slope and intercept</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>m1.lme4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">|</span> Subject), <span class="at">data =</span> Orthodont, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model failed to converge with max|grad| = 0.0464695 (tol = 0.002, component 1)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>m0.lme4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Subject), <span class="at">data =</span> Orthodont, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>Now we can run the likelihood ratio test using the <strong>varTestnlme</strong> package. The function returns an object from S3 class <code>htest</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>vt1.nlme <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1.nlme,m0.nlme)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of age is null</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  79.152 </span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 2 chi-bar-square distributions with degrees of freedom 3, 4</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 1.5502e-16  upper bound for p-value: 1.5502e-16</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>vt1.lme4 <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1.lme4,m0.lme4)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of age is null</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  79.152 </span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 2 chi-bar-square distributions with degrees of freedom 3, 4</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 1.5506e-16  upper bound for p-value: 1.5506e-16</span></span></code></pre></div>
+<p>Using the <code>EnvStats</code> package, nice printing options are available for objects of type <code>htest</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(vt1.nlme)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Results of Hypothesis Test</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; --------------------------</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Null Hypothesis:                 All 3 values of variance of age = 0</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Alternative Hypothesis:          variance of age &gt; 0  mean of age  different from 0  mean of SexFemale:age  different from 0 </span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test Name:                       Likelihood ratio test for variance components in mixed effects models</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Data:                            </span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test Statistic:                  LRT = 79.15214</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test Statistic Parameters:       df      = 3, 4</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                  weights = 0.5, 0.5</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                  FIM     = NA</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; P-values:                        pvalue.weights    = 1.550226e-16</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                  pvalue.sample     =           NA</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                  pvalue.lowerbound = 1.550226e-16</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                  pvalue.upperbound = 1.550226e-16</span></span></code></pre></div>
+<p>It is also possible to access the components of the object using $ or [[:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>vt1.nlme<span class="sc">$</span>statistic</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      LRT </span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 79.15214</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>vt1.nlme<span class="sc">$</span>p.value</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    pvalue.weights     pvalue.sample pvalue.lowerbound pvalue.upperbound </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      1.550226e-16                NA      1.550226e-16      1.550226e-16</span></span></code></pre></div>
+<p>For the p-value, four different values are provided:</p>
+<ol style="list-style-type: decimal">
+<li>the p-value computed using the chi-bar-square expression as a mixture of chi-square distributions. This requires that the weights of the chi-bar-square are available, either because their exact expression is known (only in some simple cases), or because the user ask for their approximation via the option <code>pval.comp = &quot;both&quot;</code> or <code>pval.comp = &quot;approx&quot;</code>.</li>
+<li>the p-value computed using a sample from the chi-bar-square distribution. This sample is used to approximate the chi-bar-square weights, and thus the corresponding p-value is only available when <code>pval.comp = &quot;both&quot;</code> or <code>pval.comp = &quot;approx&quot;</code>.</li>
+<li>the lower bound on the p-value: this is always available</li>
+<li>the upper bound on the p-value: this is always available</li>
+</ol>
 </div>
 <div id="case-2-testing-the-variance-of-one-effect-with-uncorrelated-random-effects" class="section level3">
 <h3>Case 2 : testing the variance of one effect with uncorrelated random effects</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># using nlme, with uncorrelated slope and intercept</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">m1diag.nlme &lt;-<span class="st"> </span><span class="kw">lme</span>(distance <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>Sex <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>age<span class="op">*</span>Sex, <span class="dt">random =</span> <span class="kw">pdDiag</span>(Subject <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>age), <span class="dt">data =</span> Orthodont, <span class="dt">method =</span> <span class="st">&quot;ML&quot;</span>)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co"># using lme4, with uncorrelated slope and intercept</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">m1diag.lme4 &lt;-<span class="st"> </span><span class="kw">lmer</span>(distance <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>Sex <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>age<span class="op">*</span>Sex <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>age <span class="op">||</span><span class="st"> </span>Subject), <span class="dt">data =</span> Orthodont, <span class="dt">REML =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7">vt1diag.nlme &lt;-<span class="st"> </span><span class="kw">varTest</span>(m1diag.nlme,m0.nlme)</a>
-<a class="sourceLine" id="cb7-8" data-line-number="8">vt1diag.lme4 &lt;-<span class="st"> </span><span class="kw">varTest</span>(m1diag.lme4,m0.lme4)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using nlme, with uncorrelated slope and intercept</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>m1diag.nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">random =</span> <span class="fu">pdDiag</span>(Subject <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> age), <span class="at">data =</span> Orthodont, <span class="at">method =</span> <span class="st">&quot;ML&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># using lme4, with uncorrelated slope and intercept</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>m1diag.lme4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">||</span> Subject), <span class="at">data =</span> Orthodont, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>vt1diag.nlme <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.nlme,m0.nlme)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of age is null</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  78.849 </span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 2 chi-bar-square distributions with degrees of freedom 2, 3</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 3.0864e-17  upper bound for p-value: 3.0864e-17</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>vt1diag.lme4 <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.lme4,m0.lme4)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of age is null</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  78.849 </span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 2 chi-bar-square distributions with degrees of freedom 2, 3</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 3.0864e-17  upper bound for p-value: 3.0864e-17</span></span></code></pre></div>
 </div>
 <div id="case-3-testing-all-the-variances" class="section level3">
 <h3>Case 3 : testing all the variances</h3>
 <p>In the previous section, the weights of the chi-bar-square distribution where available explicitly. However, it is not always the case. By default, since the computation of these weights can be time consuming, the function is computing bounds on the p-value. In many cases this can be enough to decide whether to reject or not the null hypothesis. If more precision is wanted or needed, it is possible to specify it via the option <code>pval.comp</code>, which then needs to be set to either <code>pval.comp=&quot;approx&quot;</code> or to <code>pval.comp=&quot;both&quot;</code>. In both cases, the <code>control</code> argument can be used to control the computation process. It is a list which contains three slots: <code>M</code> (default to 5000), the size of the Monte Carlo computation, <code>parallel</code> (default to <code>FALSE</code>) to specify whether computation should be parallelized, and <code>nbcores</code> (default to <code>1</code>) to set the number of cores to be used in case of parallel computing.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">m0noRE &lt;-<span class="st"> </span><span class="kw">lm</span>(distance <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>Sex <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>age<span class="op">*</span>Sex, <span class="dt">data =</span> Orthodont)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">vt &lt;-<span class="st"> </span><span class="kw">varTest</span>(m1diag.nlme,m0noRE,<span class="dt">pval.comp =</span> <span class="st">&quot;both&quot;</span>)</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="kw">summary</span>(vt)</a></code></pre></div>
-<pre><code>#&gt;        Length         Class          Mode 
-#&gt;             1 varTestObject            S4</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">vt2 &lt;-<span class="st"> </span><span class="kw">varTest</span>(m1diag.lme4,m0noRE)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw">summary</span>(vt2)</a></code></pre></div>
-<pre><code>#&gt;        Length         Class          Mode 
-#&gt;             1 varTestObject            S4</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>m0noRE <span class="ot">&lt;-</span> <span class="fu">lm</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">data =</span> Orthodont)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>vt <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.nlme,m0noRE,<span class="at">pval.comp =</span> <span class="st">&quot;both&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variances of Intercept and age are null</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  50.133 </span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 3 chi-bar-square distributions with degrees of freedom 0, 1, 2</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  associated weights and sd:  0.377 (0), 0.5 (0), 0.123 (0) </span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-value (from estimated weights): 2.3226e-12</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 7.1831e-13  upper bound for p-value: 7.2152e-12</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>vt2 <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.lme4,m0noRE)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variances of (Intercept) and age are null</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  50.133 </span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 3 chi-bar-square distributions with degrees of freedom 0, 1, 2</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 7.1831e-13  upper bound for p-value: 7.2152e-12</span></span></code></pre></div>
 <p>By default, the FIM is extracted from the packages, but it is also possible to compute it via parametric bootstrap. In this case, simply use the option <code>fim=&quot;compute&quot;</code>. The default bootstrap sampling size is <code>B=1000</code> but it can be changed. To get the exact p-value one can use</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">vt &lt;-<span class="st"> </span><span class="kw">varTest</span>(m1diag.nlme,m0noRE,<span class="dt">fim=</span><span class="st">&quot;compute&quot;</span>,<span class="dt">pval.comp =</span> <span class="st">&quot;both&quot;</span>)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw">summary</span>(vt)</a></code></pre></div>
-<pre><code>#&gt;        Length         Class          Mode 
-#&gt;             1 varTestObject            S4</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">vt2 &lt;-<span class="st"> </span><span class="kw">varTest</span>(m1diag.lme4,m0noRE,<span class="dt">fim=</span><span class="st">&quot;compute&quot;</span>,<span class="dt">pval.comp =</span> <span class="st">&quot;both&quot;</span>)</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="kw">summary</span>(vt2)</a></code></pre></div>
-<pre><code>#&gt;        Length         Class          Mode 
-#&gt;             1 varTestObject            S4</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(m1diag.nlme, m0noRE, <span class="at">fim =</span> <span class="st">&quot;compute&quot;</span>, <span class="at">pval.comp =</span> <span class="st">&quot;both&quot;</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">B=</span><span class="dv">100</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(m1diag.lme4, m0noRE, <span class="at">fim =</span> <span class="st">&quot;compute&quot;</span>, <span class="at">pval.comp =</span> <span class="st">&quot;both&quot;</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">B=</span><span class="dv">100</span>))</span></code></pre></div>
 </div>
 </div>
 <div id="generalized-linear-model" class="section level2">
 <h2>Generalized linear model</h2>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">m1 &lt;-<span class="st"> </span><span class="kw">glmer</span>(<span class="kw">cbind</span>(incidence, size <span class="op">-</span><span class="st"> </span>incidence) <span class="op">~</span><span class="st"> </span>period <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>herd),</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">             <span class="dt">family =</span> binomial, <span class="dt">data =</span> cbpp)</a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">m0 &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="kw">cbind</span>(incidence, size <span class="op">-</span><span class="st"> </span>incidence) <span class="op">~</span><span class="st"> </span>period,</a>
-<a class="sourceLine" id="cb16-4" data-line-number="4">             <span class="dt">family =</span> binomial, <span class="dt">data =</span> cbpp)</a>
-<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="kw">varTest</span>(m1,m0)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(<span class="fu">cbind</span>(incidence, size <span class="sc">-</span> incidence) <span class="sc">~</span> period <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> herd),</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> binomial, <span class="at">data =</span> cbpp)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(incidence, size <span class="sc">-</span> incidence) <span class="sc">~</span> period,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> binomial, <span class="at">data =</span> cbpp)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(m1,m0)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of (Intercept) is null</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  14.005 </span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 2 chi-bar-square distributions with degrees of freedom 0, 1</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 9.115e-05  upper bound for p-value: 9.115e-05</span></span></code></pre></div>
 </div>
 <div id="nonlinear-model" class="section level2">
 <h2>Nonlinear model</h2>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co"># with nlme</span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">fm1Theo.nlme &lt;-<span class="st"> </span><span class="kw">nlme</span>(conc <span class="op">~</span><span class="st"> </span><span class="kw">SSfol</span>(Dose, Time, lKe, lKa, lCl),</a>
-<a class="sourceLine" id="cb17-3" data-line-number="3">                     Theoph, </a>
-<a class="sourceLine" id="cb17-4" data-line-number="4">                     <span class="dt">fixed =</span> lKe <span class="op">+</span><span class="st"> </span>lKa <span class="op">+</span><span class="st"> </span>lCl <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb17-5" data-line-number="5">                     <span class="dt">start=</span><span class="kw">c</span>( <span class="fl">-2.4</span>, <span class="fl">0.45</span>, <span class="fl">-3.2</span>),</a>
-<a class="sourceLine" id="cb17-6" data-line-number="6">                     <span class="dt">random =</span> <span class="kw">pdSymm</span>(lKa <span class="op">+</span><span class="st"> </span>lCl <span class="op">~</span><span class="st"> </span><span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb17-7" data-line-number="7">fm2Theo.nlme &lt;-<span class="st"> </span><span class="kw">nlme</span>(conc <span class="op">~</span><span class="st"> </span><span class="kw">SSfol</span>(Dose, Time, lKe, lKa, lCl),</a>
-<a class="sourceLine" id="cb17-8" data-line-number="8">                     Theoph, </a>
-<a class="sourceLine" id="cb17-9" data-line-number="9">                     <span class="dt">fixed =</span> lKe <span class="op">+</span><span class="st"> </span>lKa <span class="op">+</span><span class="st"> </span>lCl <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb17-10" data-line-number="10">                     <span class="dt">start=</span><span class="kw">c</span>( <span class="fl">-2.4</span>, <span class="fl">0.45</span>, <span class="fl">-3.2</span>),</a>
-<a class="sourceLine" id="cb17-11" data-line-number="11">                     <span class="dt">random =</span> <span class="kw">pdDiag</span>(lCl <span class="op">~</span><span class="st"> </span><span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb17-12" data-line-number="12"><span class="kw">varTest</span>(fm1Theo.nlme,fm2Theo.nlme, <span class="dt">pval.comp =</span> <span class="st">&quot;both&quot;</span>)</a>
-<a class="sourceLine" id="cb17-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb17-14" data-line-number="14"><span class="co"># with lme4</span></a>
-<a class="sourceLine" id="cb17-15" data-line-number="15">Th.start  &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">lKe =</span> <span class="fl">-2.4</span>, <span class="dt">lKa =</span> <span class="fl">0.45</span>, <span class="dt">lCl =</span> <span class="fl">-3.2</span>)</a>
-<a class="sourceLine" id="cb17-16" data-line-number="16">nm1  &lt;-<span class="st"> </span><span class="kw">nlmer</span>(conc <span class="op">~</span><span class="st"> </span><span class="kw">SSfol</span>(Dose , Time ,lKe , lKa , lCl) <span class="op">~</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb17-17" data-line-number="17"><span class="st">                </span><span class="dv">0</span><span class="op">+</span>lKe<span class="op">+</span>lKa<span class="op">+</span>lCl <span class="op">+</span>(lKe<span class="op">+</span>lKa<span class="op">+</span>lCl<span class="op">|</span>Subject), </a>
-<a class="sourceLine" id="cb17-18" data-line-number="18">              <span class="dt">nAGQ=</span><span class="dv">0</span>, </a>
-<a class="sourceLine" id="cb17-19" data-line-number="19">              Theoph,</a>
-<a class="sourceLine" id="cb17-20" data-line-number="20">              <span class="dt">start =</span> Th.start)</a>
-<a class="sourceLine" id="cb17-21" data-line-number="21">nm0  &lt;-<span class="st"> </span><span class="kw">nlmer</span>(conc <span class="op">~</span><span class="st"> </span><span class="kw">SSfol</span>(Dose , Time ,lKe , lKa , lCl) <span class="op">~</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb17-22" data-line-number="22"><span class="st">                </span><span class="dv">0</span><span class="op">+</span>lKe<span class="op">+</span>lKa<span class="op">+</span>lCl <span class="op">+</span>(lKa<span class="op">+</span>lCl<span class="op">|</span>Subject), </a>
-<a class="sourceLine" id="cb17-23" data-line-number="23">              <span class="dt">nAGQ=</span><span class="dv">0</span>, </a>
-<a class="sourceLine" id="cb17-24" data-line-number="24">              Theoph,</a>
-<a class="sourceLine" id="cb17-25" data-line-number="25">              <span class="dt">start =</span> Th.start)</a>
-<a class="sourceLine" id="cb17-26" data-line-number="26"><span class="kw">varTest</span>(nm1,nm0)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># with nlme</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>fm1Theo.nlme <span class="ot">&lt;-</span> <span class="fu">nlme</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                     Theoph,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fixed =</span> lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">c</span>( <span class="sc">-</span><span class="fl">2.4</span>, <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">random =</span> <span class="fu">pdSymm</span>(lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>fm2Theo.nlme <span class="ot">&lt;-</span> <span class="fu">nlme</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                     Theoph,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fixed =</span> lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">c</span>( <span class="sc">-</span><span class="fl">2.4</span>, <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">random =</span> <span class="fu">pdDiag</span>(lCl <span class="sc">~</span> <span class="dv">1</span>))</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(fm1Theo.nlme,fm2Theo.nlme)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of lKa is null</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  79.021 </span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 2 chi-bar-square distributions with degrees of freedom 1, 2</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 3.7732e-18  upper bound for p-value: 3.7732e-18</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co"># with lme4</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>Th.start  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">lKe =</span> <span class="sc">-</span><span class="fl">2.4</span>, <span class="at">lKa =</span> <span class="fl">0.45</span>, <span class="at">lCl =</span> <span class="sc">-</span><span class="fl">3.2</span>)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>nm1  <span class="ot">&lt;-</span> <span class="fu">nlmer</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose , Time ,lKe , lKa , lCl) <span class="sc">~</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span><span class="sc">+</span>lKe<span class="sc">+</span>lKa<span class="sc">+</span>lCl <span class="sc">+</span>(lKe<span class="sc">+</span>lKa<span class="sc">+</span>lCl<span class="sc">|</span>Subject),</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>              <span class="at">nAGQ=</span><span class="dv">0</span>,</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>              Theoph,</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>              <span class="at">start =</span> Th.start)</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>nm0  <span class="ot">&lt;-</span> <span class="fu">nlmer</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose , Time ,lKe , lKa , lCl) <span class="sc">~</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span><span class="sc">+</span>lKe<span class="sc">+</span>lKa<span class="sc">+</span>lCl <span class="sc">+</span>(lKa<span class="sc">+</span>lCl<span class="sc">|</span>Subject),</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>              <span class="at">nAGQ=</span><span class="dv">0</span>,</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>              Theoph,</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>              <span class="at">start =</span> Th.start)</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(nm1,nm0)</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of lKe is null</span></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  2.0439 </span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 2 chi-bar-square distributions with degrees of freedom 2, 3</span></span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 0.46161  upper bound for p-value: 0.46161</span></span></code></pre></div>
 <p>Testing for the presence of randomness in the model.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">fm1 &lt;-<span class="st"> </span><span class="kw">nlme</span>(conc <span class="op">~</span><span class="st"> </span><span class="kw">SSfol</span>(Dose, Time, lKe, lKa, lCl),</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">                     Theoph, </a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">                     <span class="dt">fixed =</span> lKe <span class="op">+</span><span class="st"> </span>lKa <span class="op">+</span><span class="st"> </span>lCl <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb18-4" data-line-number="4">                     <span class="dt">start=</span><span class="kw">c</span>( <span class="fl">-2.4</span>, <span class="fl">0.45</span>, <span class="fl">-3.2</span>),</a>
-<a class="sourceLine" id="cb18-5" data-line-number="5">                     <span class="dt">random =</span> <span class="kw">pdDiag</span>(lKe <span class="op">+</span><span class="st"> </span>lKa <span class="op">+</span><span class="st"> </span>lCl <span class="op">~</span><span class="st"> </span><span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb18-6" data-line-number="6">fm0 &lt;-<span class="st"> </span><span class="kw">nls</span>(conc <span class="op">~</span><span class="st"> </span><span class="kw">SSfol</span>(Dose, Time, lKe, lKa, lCl),</a>
-<a class="sourceLine" id="cb18-7" data-line-number="7">                     Theoph, </a>
-<a class="sourceLine" id="cb18-8" data-line-number="8">                     <span class="dt">start=</span><span class="kw">list</span>(<span class="dt">lKe=</span><span class="op">-</span><span class="fl">2.4</span>,<span class="dt">lKa=</span><span class="fl">0.45</span>,<span class="dt">lCl=</span><span class="op">-</span><span class="fl">3.2</span>))</a>
-<a class="sourceLine" id="cb18-9" data-line-number="9"><span class="kw">varTest</span>(fm1,fm0)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fm1 <span class="ot">&lt;-</span> <span class="fu">nlme</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                     Theoph,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fixed =</span> lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">c</span>( <span class="sc">-</span><span class="fl">2.4</span>, <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">random =</span> <span class="fu">pdDiag</span>(lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>fm0 <span class="ot">&lt;-</span> <span class="fu">nls</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                     Theoph,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">list</span>(<span class="at">lKe=</span><span class="sc">-</span><span class="fl">2.4</span>,<span class="at">lKa=</span><span class="fl">0.45</span>,<span class="at">lCl=</span><span class="sc">-</span><span class="fl">3.2</span>))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(fm1,fm0)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variances of lKe and lKa and lCl are null</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic: </span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  117.17 </span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Limiting distribution:</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mixture of 4 chi-bar-square distributions with degrees of freedom 0, 1, 2, 3</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lower-bound for p-value: 1.3161e-27  upper bound for p-value: 1.7483e-25</span></span></code></pre></div>
+<p>We can see that there is no need to approximate the weights of the chi-bar-square distribution since the bounds on the p-value are sufficient to reject the null hypothesis at any <code>classical</code> level.</p>
 </div>
 
 

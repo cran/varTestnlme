@@ -1,64 +1,54 @@
-#' @name funcCO
-#' @rdname funcCO
+#' Internal functions for constrained minimization
 #'
-#' @title Internal functions for constrained minimization
+#' Groups of functions used for the constrained minimization problem arising in the computation of the
+#' likelihood ratio test statistics. 
 #'
-#' @description Groups of functions used for the constrained minimization problem arising in the computation of the
-#' likelihood ratio test statistics.
+#' @describeIn objFunction objective function to be optimized
 #'
 #' @param x A vector
 #' @param cst A list of constants to be passed to the optimisation function
-#' @return value of the objective function, its gradient, and the set of inequality and euqality constraints
+#' @return value of the objective function, its gradient, and the set of inequality and equality constraints
 #'
-#' @noRd
-NULL
-
-#' @rdname funcCO
-#' @export
 objFunction <- function(x,cst){
   return(t(cst$Z-x)%*%cst$invV%*%(cst$Z-x))
 }
 
 
-#' @rdname funcCO
-#' @export
+#' @describeIn objFunction gradient of the objective function
 gradObjFunction <- function(x,cst){
   return(-2*t(cst$Z-x)%*%cst$invV)
 }
 
-# Function creating a symmetric matrix from its unique elements stored in a vector.
-#' @rdname funcCO
-#' @export
-symMatrixFromVect <- function(v){
-  n <- length(v)
+#' @describeIn objFunction function creating a symmetric matrix from its unique elements stored in a vector
+symMatrixFromVect <- function(x){
+  n <- length(x)
 
   if (n==1){
-    return(v)
+    return(x)
   }else{
-    p <- floor(sqrt(2*n))# nb of rows/columns
+    p <- floor(sqrt(2*n)) 
 
     m <- matrix(0,nrow=p,ncol=p)
-    m[lower.tri(m,diag=TRUE)] <- v
+    m[lower.tri(m,diag=TRUE)] <- x
 
     return(m+t(m)-diag(diag(m)))
   }
 }
 
 
-#' @rdname funcCO
-#' @export
+#' @describeIn objFunction set of inequality constraints
 ineqCstr <- function(x,cst){
-  r <- cst$cbs@dims$dimGamma$dimSplus # nb of variances tested in each block
+  r <- cst$dimsCone$dimGamma$dimSplus # nb of variances tested in each block
   # n0R : nb of components in the cone corresponding to {0} or R
-  n0R <- cst$cbs@dims$dimBeta$dim0 + cst$cbs@dims$dimBeta$dimR + cst$cbs@dims$dimGamma$dim0 + cst$cbs@dims$dimGamma$dimR
+  n0R <- cst$dimsCone$dimBeta$dim0 + cst$dimsCone$dimBeta$dimR + cst$dimsCone$dimGamma$dim0 + cst$dimsCone$dimGamma$dimR
   dimMats <- r*(r+1)/2 # dimensions of the blocks of variances tested
   n <- length(x) # total dimension of parameter space
-  ds <- cst$cbs@dims$dimSigma # dimension of residual parameter
+  ds <- cst$dimsCone$dimSigma # dimension of residual parameter
 
   if (sum(r) == 1){
     constr <- x[n-ds]
   }else{
-    if (cst$cbs@orthan){
+    if (cst$orthan){
       constr <- x[(n0R+1):(n0R+sum(r))]
     }else{
       constr <- numeric()
@@ -77,19 +67,18 @@ ineqCstr <- function(x,cst){
 }
 
 
-#' @rdname funcCO
-#' @export
+#' @describeIn objFunction jacobian of the inequality constraints
 jacobianIneqCstr <- function(x,cst){
-  r <- cst$cbs@dims$dimGamma$dimSplus
-  n0R <- cst$cbs@dims$dimBeta$dim0 + cst$cbs@dims$dimBeta$dimR + cst$cbs@dims$dimGamma$dim0 + cst$cbs@dims$dimGamma$dimR # dimensions of spaces {0} and R (corresponding to non-constrained elements)
+  r <- cst$dimsCone$dimGamma$dimSplus
+  n0R <- cst$dimsCone$dimBeta$dim0 + cst$dimsCone$dimBeta$dimR + cst$dimsCone$dimGamma$dim0 + cst$dimsCone$dimGamma$dimR # dimensions of spaces {0} and R (corresponding to non-constrained elements)
   dimMats <- r*(r+1)/2
   n <- length(x)
-  ds <- cst$cbs@dims$dimSigma
+  ds <- cst$dimsCone$dimSigma
 
   # Jacobian of the inequality constrains
   jacobian <- matrix(0,nrow=length(dimMats),ncol=n)
 
-  if (cst$cbs@orthan){
+  if (cst$orthan){
     jacobian <- matrix(0,nrow=r,ncol=n)
     jacobian[1:r,(n0R+1):(n0R+r)] <- diag(r)
   }else{
@@ -115,15 +104,14 @@ jacobianIneqCstr <- function(x,cst){
 }
 
 
-#' @rdname funcCO
-#' @export
+#' @describeIn objFunction set of equality constraints
 eqCstr <- function(x,cst){
   # equality constraints come from the fixed effects, the untested blocks, the untested covariances in partially tested blocks, and the residual
-  nontestedFix <- cst$cbs@dims$dimBeta$dim0
-  nbFix <- cst$cbs@dims$dimBeta$dim0 + cst$cbs@dims$dimBeta$dimR
-  n0 <- nbFix + cst$cbs@dims$dimGamma$dim0
+  nontestedFix <- cst$dimsCone$dimBeta$dim0
+  nbFix <- cst$dimsCone$dimBeta$dim0 + cst$dimsCone$dimBeta$dimR
+  n0 <- nbFix + cst$dimsCone$dimGamma$dim0
   n <- length(x)
-  ds <- cst$cbs@dims$dimSigma
+  ds <- cst$dimsCone$dimSigma
 
   if (nontestedFix < nbFix){ # if some fixed effects are tested
     constr <- x[c(1:nontestedFix,(nbFix+1):n0,(n-ds+1):n)]
@@ -136,12 +124,11 @@ eqCstr <- function(x,cst){
 }
 
 
-#' @rdname funcCO
-#' @export
+#' @describeIn objFunction jacobian of the inequality constraints
 jacobianEqCstr <- function(x,cst){
-  n0 <- cst$cbs@dims$dimBeta$dim0 + cst$cbs@dims$dimBeta$dimR + cst$cbs@dims$dimGamma$dim0
+  n0 <- cst$dimsCone$dimBeta$dim0 + cst$dimsCone$dimBeta$dimR + cst$dimsCone$dimGamma$dim0
   n <- length(x)
-  ds <- cst$cbs@dims$dimSigma
+  ds <- cst$dimsCone$dimSigma
 
   jacobian <- matrix(0,nrow=n0+ds,ncol=n)
 
