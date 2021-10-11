@@ -19,11 +19,11 @@ data("Orthodont")
 
 # using nlme, with correlated slope and intercept
 m1.nlme <- lme(distance ~ 1 + Sex + age + age*Sex, random = pdSymm(Subject ~ 1 + age), data = Orthodont, method = "ML")
-m0.nlme <- lme(distance ~ 1 + Sex, random = ~ 1 | Subject, data = Orthodont, method = "ML")
+m0.nlme <- lme(distance ~ 1 + Sex + age + age*Sex, random = ~ 1 | Subject, data = Orthodont, method = "ML")
 
 # using lme4, with correlated slope and intercept
 m1.lme4 <- lmer(distance ~ 1 + Sex + age + age*Sex + (1 + age | Subject), data = Orthodont, REML = FALSE)
-m0.lme4 <- lmer(distance ~ 1 + Sex + (1 | Subject), data = Orthodont, REML = FALSE)
+m0.lme4 <- lmer(distance ~ 1 + Sex + age + age*Sex + (1 | Subject), data = Orthodont, REML = FALSE)
 
 
 ## -----------------------------------------------------------------------------
@@ -78,6 +78,7 @@ fm2Theo.nlme <- nlme(conc ~ SSfol(Dose, Time, lKe, lKa, lCl),
                      random = pdDiag(lCl ~ 1))
 varCompTest(fm1Theo.nlme,fm2Theo.nlme)
 
+## -----------------------------------------------------------------------------
 # with lme4
 Th.start  <- c(lKe = -2.4, lKa = 0.45, lCl = -3.2)
 nm1  <- nlmer(conc ~ SSfol(Dose , Time ,lKe , lKa , lCl) ~

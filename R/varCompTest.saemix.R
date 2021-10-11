@@ -2,13 +2,13 @@
 #' @importFrom stats formula pchisq
 #' @rawNamespace export(varCompTest.saemix)
 #' @export
-varCompTest.saemix <- function(m1,m0,control = list(M=5000,parallel=T,nb_cores=1,B=1000),pval.comp = "bounds",fim = "extract"){
+varCompTest.saemix <- function(m1,m0,control = list(M=5000,parallel=FALSE,nb_cores=1,B=1000),pval.comp = "bounds",fim = "extract"){
   
   # Specify default arguments in control
   if (!is.null(control)) {
     optionNames <- names(control)
     if (!"M" %in% optionNames) control$M=5000
-    if (!"parallel" %in% optionNames) control$parallel=T
+    if (!"parallel" %in% optionNames) control$parallel=FALSE
     if (!"nbcores" %in% optionNames) control$nbcores=1
     if (!"B" %in% optionNames) control$B = 1000
   }
@@ -16,19 +16,13 @@ varCompTest.saemix <- function(m1,m0,control = list(M=5000,parallel=T,nb_cores=1
   message("Variance components testing in mixed effects models")
   
   # Identify the packages from which m0 and m1 come from
-  pkg <- pckName(m1)
   randm0 <- !(class(m0) %in% c("lm","glm","nls")) # are there any random effect under H0?
   
   # Extract data structure
   msdata <- extractStruct(m1,m0,randm0)
-  
-  if (length(msdata$nameVarTested)==1){
-    message(paste("Testing that the variance of",msdata$nameVarTested,"is null\n"))
-  }else if (length(msdata$nameVarTested) > 1){
-    message(paste("Testing that the variances of",paste(msdata$nameVarTested,sep="",collapse = " and "),"are null\n"))
-  }else{
-    message(paste("Testing that covariances ",paste0(msdata$detailStruct$names[msdata$detailStruct$tested],collapse=", "),"are null"))
-  }
+
+  # Print message
+  print.desc.message(msdata)
   
   # Compute LRT
   lrt <- -2*(stats::logLik(m0) - stats::logLik(m1))
@@ -97,43 +91,19 @@ varCompTest.saemix <- function(m1,m0,control = list(M=5000,parallel=T,nb_cores=1
   uppboundpval <- (1/2)*sum(stats::pchisq(lrt,cbs.df.dims$df[(length(cbs.df.dims$df)-1):length(cbs.df.dims$df)],lower.tail = F))
   lowboundpval <- (1/2)*sum(stats::pchisq(lrt,cbs.df.dims$df[1:2],lower.tail = F))
   
-  
-  # Print results
-  message(paste("\nLikelihood ratio test statistic: \n LRT = ",format(lrt,digits=5),
-                "\n\nLimiting distribution:"))
-  if (length(cbs.df.dims$df) > 1){
-    message(paste("mixture of",length(cbs.df.dims$df),"chi-bar-square distributions with degrees of freedom",paste(cbs.df.dims$df,sep="",collapse = ", "),"\n"))
-    
-    if (pval.comp %in% c("approx","both")){
-      message(paste(" associated weights and sd: ",paste(paste(round(cbs.weights.sample$weights,3)," (",round(cbs.weights.sample$sdWeights,3),")",sep=""),sep="",collapse = ", "),
-                    "\n\np-value (from estimated weights):",format(pvalue1,digits = 5)))
-      
-      if (length(cbs.weights.sample$randomCBS) > 0) message(paste("\np-value (from simulated chi-bar-square distribution):",format(pvalue2,digits=5),"\n"))
-    }
-    
-    if (pval.comp %in% c("bounds","both")) message(paste("lower-bound for p-value:",format(lowboundpval,digits=5)," upper bound for p-value:",format(uppboundpval,digits=5)))
-  }else{
-    message(paste0("  chi-bar-square distributions with ",cbs.df.dims$df," degree of freedom\n"))
-    message(paste0("  p-value: ",format(pvalue1,digits=5)))
-  }
-  
   # create results, object of class htest
-  null.value <- rep(0,length(msdata$nameVarTested)+length(msdata$nameFixedTested))
-  if (length(msdata$nameFixedTested)==0){
-    names(null.value) <- paste("variance of",msdata$nameVarTested)
-    alternative=c(paste("variance of",msdata$nameVarTested,"> 0"))
-  }else{
-    names(null.value) <- c(paste("variance of",msdata$nameVarTested),paste(" mean of",msdata$nameFixedTested)) 
-    alternative=c(paste("variance of",msdata$nameVarTested,"> 0"),paste(" mean of",msdata$nameFixedTested," different from 0"))
-  }
+  null.value <- null.desc(msdata)
+  alternative <- alt.desc(msdata)
   
   results <- list(statistic=c(LRT=lrt),
                   null.value=null.value,
                   alternative=alternative,
-                  parameters=list(df=cbs.df.dims$df,weights=cbs.weights.sample$weights,FIM=fim),
+                  parameters=list(df=cbs.df.dims$df,weights=cbs.weights.sample$weights,sdweights=cbs.weights.sample$sdWeights,FIM=fim),
                   method="Likelihood ratio test for variance components in mixed effects models",
                   p.value=c(pvalue.weights=pvalue1,pvalue.sample=pvalue2,pvalue.lowerbound=lowboundpval,pvalue.upperbound=uppboundpval))
-  class(results) <- "htest"
+  class(results) <- c("vctest","htest")
+  
+  print.res.message(results)
   
   invisible(results)
 }

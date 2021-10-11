@@ -1,3 +1,8 @@
+# varTestnlme 1.1.0
+
+Correct some typos in documentation, and export print and summary functions. Also export some functions needed to compute the Fisher Information Matrix. Small improvements in the outputs of print and summary functions. Also add some warning when the residual variance structure is not the same between the two models, when using nlme.
+Correct a bug in chi-bar-square weights estimation.
+
 # varTestnlme 1.0.0
 
 Change the structure of the package for a more modular one. Now the main function returns an object of class htest, which can be printed for example via the print() function of package EnvStats. To avoid conflicts with the varTest function of EnvStats package, the main function of our package was renamed from varTest to varCompTest.
