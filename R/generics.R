@@ -37,6 +37,7 @@
 #' @param fim (optional) the method to compute the Fisher Information Matrix. Options are: \code{fim="extract"} to extract the
 #' FIM computed by the package which was used to fit the models, \code{fim="compute"} to evaluate the FIM using parametric
 #' bootstrap, and \code{fim=I} with \code{I} a positive semidefinite matrix, for a FIM provided by the user.
+#' @param  output a boolean specifying if any output should be printed in the console (default to TRUE) 
 #' 
 #' @return An object of class \code{htest} with the following components:
 #' \itemize{
@@ -81,16 +82,8 @@
 #' Silvapulle  MJ, Sen PK, 2011. Constrained statistical inference: order, inequality and shape constraints.
 #' @export varCompTest
 #' @importFrom stats formula pchisq
-varCompTest <- function(m1, m0, control = list(M=5000,parallel=T,nb_cores=1,B=1000),pval.comp = "bounds",fim = "extract") {
-  # Specify default arguments in control
-  if (!is.null(control)) {
-    optionNames <- names(control)
-    if (!"M" %in% optionNames) control$M=5000
-    if (!"parallel" %in% optionNames) control$parallel=T
-    if (!"nbcores" %in% optionNames) control$nbcores=1
-    if (!"B" %in% optionNames) control$B = 1000
-  }
-  
+varCompTest <- function(m1, m0, control = list(M=5000,parallel=T,nb_cores=1,B=1000),pval.comp = "bounds",fim = "extract", output=TRUE) {
+
   pkg1 <- pckName(m1)
   pkg0 <- pckName(m0)
   
@@ -107,7 +100,7 @@ varCompTest <- function(m1, m0, control = list(M=5000,parallel=T,nb_cores=1,B=10
 varTest <- function(m1, m0, control = list(M=5000,parallel=T,nb_cores=1,B=1000),pval.comp = "bounds",fim = "extract") {
   .Deprecated("varCompTest")
   
-  varCompTest(m1, m0, control = list(M=5000,parallel=T,nb_cores=1,B=1000),pval.comp = "bounds",fim = "extract")
+  varCompTest(m1, m0, control = list(M=5000,parallel=T,nb_cores=1,B=1000),pval.comp = "bounds",fim = "extract", output=TRUE)
 }
 
 

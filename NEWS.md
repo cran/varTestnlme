@@ -1,11 +1,14 @@
+# varTestnlme 1.3.0
+
+Correct a bug for Windows platforms, where new control arguments in varCompTest function could not e accounted for.
+
 # varTestnlme 1.2.0
 
 Correct a typo in the definition of generic functions for SaemixObject.
 
-
 # varTestnlme 1.1.1
 
-Due to the updated version of package lmeresampler, some bugs appeared in the previous version and were corrected. More precisely, the mySumm function used for the parametric bootstrap now outputs named vectors to avoid bugs when using dplyr::bind_rows fnction inside lmeresampler package.
+Due to the updated version of package lmeresampler, some bugs appeared in the previous version and were corrected. More precisely, the mySumm function used for the parametric bootstrap now outputs named vectors to avoid bugs when using dplyr::bind_rows function inside lmeresampler package.
 
 # varTestnlme 1.1.0
 
