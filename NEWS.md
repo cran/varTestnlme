@@ -1,3 +1,7 @@
+# varTesnlme 1.3.1
+
+Change the computation of parametric bootstrap for linear mixed models fitted with nlme after lmersampler package was archived
+
 # varTestnlme 1.3.0
 
 Correct a bug for Windows platforms, where new control arguments in varCompTest function could not e accounted for.

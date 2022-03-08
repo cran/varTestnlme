@@ -173,6 +173,9 @@ bootinvFIM.merMod <- function(m, B=1000){
   
   # Use bootMer functions if linear or generalized linear, otherwise code our own bootstrap
   if (!nonlin){
+    
+    message(paste0("\t ...generating the B=",B," bootstrap samples ...\n"))
+    
     bootstrap <- lme4::bootMer(m, mySumm, use.u = F, type = "parametric", nsim = B)
     bootstrap <- bootstrap$t[, colSums(bootstrap$t != 0) > 0]
     invfim <- cov(bootstrap)

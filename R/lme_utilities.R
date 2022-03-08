@@ -291,8 +291,35 @@ bootinvFIM.lme <- function(m, B=1000){
   nonlin <- inherits(m,"nlme")
   
   if (!nonlin){
-    bootstrap <- lmeresampler::bootstrap(m, mySumm, B = B, type = "parametric")
-    bootstrap <- bootstrap$replicates[, colSums(bootstrap$replicates != 0) > 0]
+    #  bootstrap <- lmeresampler::bootstrap(m, mySumm, B = B, type = "parametric")
+    #  bootstrap <- bootstrap$replicates[, colSums(bootstrap$replicates != 0) > 0]
+    #  invfim <- cov(bootstrap)
+    
+    ## new version to avoid using archived package lmersampler
+    paramBoot <- mySumm(m)
+    
+    ystar <- nlmeU::simulateY(m, nsim = B)
+    row.names(ystar) <- 1:m$dims$N
+    ystar <- data.frame(ystar)
+    
+    mod.fixd <- stats::as.formula(m$call$fixed)
+    mod.rand <- m$call$random
+    mod.data <- m$data
+    
+    refits <- purrr::map(ystar, function(y) {
+      mod.data[,as.character(mod.fixd[[2]])] <- unname(y)
+      # create new lme
+      if(is.null(mod.rand)){
+        out.lme <- try(do.call("lme", args = list(fixed = mod.fixd, data = mod.data)))
+      } else{
+        mod.rand <- stats::as.formula(mod.rand)
+        out.lme <- try(do.call("lme", args = list(fixed = mod.fixd, data = mod.data, random = mod.rand)))
+      }
+      out.lme
+    })
+    
+    bootstrap <- t(sapply(refits, FUN=function(out.m){mySumm(out.m)}))
+    bootstrap <- bootstrap[, colSums(bootstrap != 0) > 0]
     invfim <- cov(bootstrap)
     
     Gamma1 <- extractVarCov(m)
@@ -320,6 +347,8 @@ bootinvFIM.lme <- function(m, B=1000){
     }
     namesParams <- c(names(m$coefficients$fixed),covNames1,"sd_residual")
     colnames(invfim) <- rownames(invfim) <- namesParams
+    
+    
   }else{
     beta <- nlme::fixef(m) # fixed effects
     resStd <- stats::sigma(m)

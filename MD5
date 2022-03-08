@@ -1,11 +1,11 @@
-c8616e928612e0e8b5ee92b414fbfff1 *DESCRIPTION
+390ed0596c77cb6145fec8eee5abcc2e *DESCRIPTION
 e84cefe1d17dff8bb3cd90fb84242652 *NAMESPACE
-90cebcf896f17caf35bde4193c52360c *NEWS.md
+2fc59809c519f7bb00dae94fae2cadaa *NEWS.md
 71d8a9bd59acd67f08009ceee881df91 *R/chibarsquare.R
 44cbeac0bb67aed62a0321e1aa3b4053 *R/constraintsFn.R
 d42fafd83406ac75ef814b05dac780cb *R/generics.R
-4c5b0f9ab3e856892656b37d2a89f572 *R/lme4_utilities.R
-567da63b4b6273393f1cb19934729d9d *R/lme_utilities.R
+0572440eb8b80d47f0f4177df4a9f1a8 *R/lme4_utilities.R
+a72ef38e8a9314f0dc16b09453ae672e *R/lme_utilities.R
 b681c187c665b4d0c8f54964a8444a3b *R/methods.R
 892b71de78770f7b1a7952a54053ee73 *R/pkgName.R
 90a397604db2e3999396b74194eb1e16 *R/saemix_utilities.R
