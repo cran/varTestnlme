@@ -75,13 +75,11 @@ extractStruct.lme <- function(m1,m0,randm0){
   nameRE <- names(m1$groups)
   
   # get the residual variance structure
-  varStructm1 <- m1$modelStruct$varStruct
-  varStructm0 <- m0$modelStruct$varStruct
-  if (length(varStructm0) != length(varStructm1)){
-    stop("the residual variance model should be the same under both hypotheses")
-  }else if (length(varStructm0) > 0 & length(varStructm1) > 0){
+  varStructm1 <- formula(m1$modelStruct$varStruct)
+  varStructm0 <- formula(m0$modelStruct$varStruct)
+  if (length(varStructm0) > 0 & length(varStructm1) > 0){
     if (varStructm0 != varStructm1){
-      stop("the residual variance model should be the same under both hypotheses")
+        stop("the residual variance model should be the same under both hypotheses")
     }
   }
   
@@ -281,6 +279,7 @@ bootinvFIM.lme <- function(m, B=1000){
     beta <- nlme::fixef(m)
     resStd <- stats::sigma(m)
     Sigma <- extractVarCov(m)
+    diagSigma = Matrix::isDiagonal(Sigma)
     if(diagSigma){
       theta <- c(beta=beta,Gamma=diag(Sigma),sigma=resStd)
     }else{
@@ -291,37 +290,54 @@ bootinvFIM.lme <- function(m, B=1000){
   nonlin <- inherits(m,"nlme")
   
   if (!nonlin){
-    #  bootstrap <- lmeresampler::bootstrap(m, mySumm, B = B, type = "parametric")
-    #  bootstrap <- bootstrap$replicates[, colSums(bootstrap$replicates != 0) > 0]
-    #  invfim <- cov(bootstrap)
-    
-    ## new version to avoid using archived package lmersampler
-    paramBoot <- mySumm(m)
-    
-    ystar <- nlmeU::simulateY(m, nsim = B)
-    row.names(ystar) <- 1:m$dims$N
-    ystar <- data.frame(ystar)
-    
-    mod.fixd <- stats::as.formula(m$call$fixed)
-    mod.rand <- m$call$random
-    mod.data <- m$data
-    
-    refits <- purrr::map(ystar, function(y) {
-      mod.data[,as.character(mod.fixd[[2]])] <- unname(y)
-      # create new lme
-      if(is.null(mod.rand)){
-        out.lme <- try(do.call("lme", args = list(fixed = mod.fixd, data = mod.data)))
-      } else{
-        mod.rand <- stats::as.formula(mod.rand)
-        out.lme <- try(do.call("lme", args = list(fixed = mod.fixd, data = mod.data, random = mod.rand)))
+    success <- F
+    while(!success){
+      bootstrap <- try(lmeresampler::bootstrap(m, mySumm, B = B, type = "parametric"),silent=TRUE)
+      success <- !inherits(bootstrap,"try-error")
+      if (!success){
+        bootstrap <- try(lmeresampler::bootstrap(m, mySumm, B = B, type = "residual"),silent=TRUE)
+        success <- !inherits(bootstrap,"try-error")
       }
-      out.lme
-    })
-    
-    bootstrap <- t(sapply(refits, FUN=function(out.m){mySumm(out.m)}))
-    bootstrap <- bootstrap[, colSums(bootstrap != 0) > 0]
+    }
+    bootstrap <- bootstrap$replicates[, colSums(bootstrap$replicates != 0) > 0]
     invfim <- cov(bootstrap)
     
+    ## new version to avoid using archived package lmersampler
+    # paramBoot <- mySumm(m)
+    # 
+    # message(paste0("\t ...generating the B=",B," bootstrap samples ...\n"))
+    # refits <- list()
+    # 
+    # b <- 1
+    # tbar <- utils::txtProgressBar(min=1,max=B,char = ".", style = 3)
+    # while (b <= B){  
+    #   ystar <- nlmeU::simulateY(m, nsim = 1)
+    #   row.names(ystar) <- 1:m$dims$N
+    #   ystar <- data.frame(ystar)
+    #   
+    #   mod.fixd <- stats::as.formula(m$call$fixed)
+    #   mod.rand <- m$call$random
+    #   mod.data <- m$data
+    #   
+    #   mod.data[,as.character(mod.fixd[[2]])] <- unname(ystar)
+    #   # create new lme
+    #   if(is.null(mod.rand)){
+    #     fitInd <- try(do.call("lme", args = list(fixed = mod.fixd, data = mod.data)))
+    #   } else{
+    #     mod.rand <- stats::as.formula(mod.rand)
+    #     fitInd <- try(do.call("lme", args = list(fixed = mod.fixd, data = mod.data, random = mod.rand)))
+    #   }
+    #   
+    #   if (!inherits(fitInd,"try-error")){
+    #     refits[[b]] <- fitInd
+    #     b <- b + 1
+    #   }
+    # }
+    # 
+    # bootstrap <- t(sapply(refits, FUN=function(fitInd){mySumm(fitInd)}))
+    # bootstrap <- bootstrap[, colSums(bootstrap != 0) > 0]
+    # invfim <- cov(bootstrap)
+    # 
     Gamma1 <- extractVarCov(m)
     namesRE <- colnames(m$coefficients$random[[1]])
     if (length(Gamma1)>1 & !Matrix::isDiagonal(Gamma1)){

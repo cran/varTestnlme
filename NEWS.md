@@ -1,3 +1,7 @@
+# varTestnlme 1.3.2
+
+Correct a bug in the comparison of residual variance structure, and coming back to lmersampler for parametric bootstrap in linear mixed model after the package being un-archived.
+
 # varTesnlme 1.3.1
 
 Change the computation of parametric bootstrap for linear mixed models fitted with nlme after lmersampler package was archived
