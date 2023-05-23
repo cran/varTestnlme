@@ -1,11 +1,11 @@
-0fa8e0ebbc83e5db8ebde1747c381645 *DESCRIPTION
-c2820ec987d3bd323ecd7886c3ec5d9e *NAMESPACE
-800fd2702ae7d37e0f494be01a97bcf6 *NEWS.md
+3139add02e1509a96532d32f79df1177 *DESCRIPTION
+e27cc0b340d549e9b9b8de639773e43c *NAMESPACE
+cd6ac891dca6a3af1bf9aa53518bab4e *NEWS.md
 71d8a9bd59acd67f08009ceee881df91 *R/chibarsquare.R
 44cbeac0bb67aed62a0321e1aa3b4053 *R/constraintsFn.R
 b9506d66c7c3fc68c2f5dac2d6ab71de *R/generics.R
 0572440eb8b80d47f0f4177df4a9f1a8 *R/lme4_utilities.R
-0d2b891dd6cbc410b01cb10487d3368b *R/lme_utilities.R
+d5189ec2f19006f49d47c021398014d7 *R/lme_utilities.R
 b681c187c665b4d0c8f54964a8444a3b *R/methods.R
 892b71de78770f7b1a7952a54053ee73 *R/pkgName.R
 90a397604db2e3999396b74194eb1e16 *R/saemix_utilities.R
@@ -19,7 +19,7 @@ ef66b81ba7defdf5f1aa8b9a40932ca5 *R/varTestnlme-package.R
 6ee6ffb2c488159dbb137f496099a303 *inst/CITATION
 283c988090ca09b292196cd19fa08cf7 *inst/doc/varTestnlme.R
 f15536092e423755b0d278f65d5eb78d *inst/doc/varTestnlme.Rmd
-faa64bcce6736f654ac2039e54fca73d *inst/doc/varTestnlme.html
+60a9b8ca731ab6d11f3ffe1a72989a88 *inst/doc/varTestnlme.html
 1f942a4bb00d172e25e3d9d94334ee49 *man/alt.desc.Rd
 8058837bfe54e2f2c1d2c2651fea7e6b *man/approxWeights.Rd
 ad96e6dd0374cbf0be039a97111c23d7 *man/bootinvFIM.Rd
@@ -27,6 +27,7 @@ e670feebadaf54ec0c6233f679dd1afd *man/bootinvFIM.SaemixObject.Rd
 b57c170f8374b0e628d200cf3b569593 *man/bootinvFIM.lme.Rd
 60073df45967d41b2426e08ab089c926 *man/bootinvFIM.merMod.Rd
 b7221dc4c54497d3e252038a41212e42 *man/dfChiBarSquare.Rd
+a28ebf4d39e33ebbdcbe75107f42290b *man/extractFIM.lme.Rd
 cdc09464fde44998f241b05412b01f7a *man/extractStruct.Rd
 9cc1eb8bd8849d37f7969184651d3f8c *man/extractStruct.SaemixObject.Rd
 7b45b7e63460c6cebf50231dde8347ba *man/extractStruct.lme.Rd

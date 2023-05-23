@@ -1,4 +1,10 @@
-# Extract FIM
+#' @name extractFIM.lme
+#' @rdname extractFIM.lme
+#'
+#' @title Extract FIM
+#'
+#' @param m the model to extract the FIM from
+#' @param struct the structure of the covariance matrix (either 'full', 'diag', or 'blockdiag)
 extractFIM.lme <- function(m,struct){
   nameGroup <- names(m$groups)
   namesFE <- names(m$coefficients$fixed)

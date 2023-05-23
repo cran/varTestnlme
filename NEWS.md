@@ -1,3 +1,7 @@
+# varTestnlme 1.3.3
+
+Add an export for function extractFIM.lme 
+
 # varTestnlme 1.3.2
 
 Correct a bug in the comparison of residual variance structure, and coming back to lmersampler for parametric bootstrap in linear mixed model after the package being un-archived.
