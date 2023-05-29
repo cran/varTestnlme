@@ -1,5 +1,5 @@
-3139add02e1509a96532d32f79df1177 *DESCRIPTION
-e27cc0b340d549e9b9b8de639773e43c *NAMESPACE
+0288992769fc57fb0561b17101f1dfa6 *DESCRIPTION
+b54eefb0d1e6d708f3b293128cc2f790 *NAMESPACE
 cd6ac891dca6a3af1bf9aa53518bab4e *NEWS.md
 71d8a9bd59acd67f08009ceee881df91 *R/chibarsquare.R
 44cbeac0bb67aed62a0321e1aa3b4053 *R/constraintsFn.R
@@ -19,7 +19,7 @@ ef66b81ba7defdf5f1aa8b9a40932ca5 *R/varTestnlme-package.R
 6ee6ffb2c488159dbb137f496099a303 *inst/CITATION
 283c988090ca09b292196cd19fa08cf7 *inst/doc/varTestnlme.R
 f15536092e423755b0d278f65d5eb78d *inst/doc/varTestnlme.Rmd
-60a9b8ca731ab6d11f3ffe1a72989a88 *inst/doc/varTestnlme.html
+faa64bcce6736f654ac2039e54fca73d *inst/doc/varTestnlme.html
 1f942a4bb00d172e25e3d9d94334ee49 *man/alt.desc.Rd
 8058837bfe54e2f2c1d2c2651fea7e6b *man/approxWeights.Rd
 ad96e6dd0374cbf0be039a97111c23d7 *man/bootinvFIM.Rd
