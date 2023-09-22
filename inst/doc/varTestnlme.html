@@ -340,21 +340,22 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(varTestnlme)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(varTestnlme)</span></code></pre></div>
 <p>The <strong>varTesnlme</strong> package is very easy to use. Below
 are small examples on how to run it for linear, generalized linear and
-nonlinear mixed-effect models.</p>
+nonlinear mixed-effect models. A more detailed description is available
+in the paper <a href="doi:10.18637/jss.v107.i06" class="uri">doi:10.18637/jss.v107.i06</a>.</p>
 <p>Mixed-effect models can be run using <a href="https://CRAN.R-project.org/package=nlme">nlme</a> or <a href="https://CRAN.R-project.org/package=lme4">lme4</a>, but also using
 <a href="https://CRAN.R-project.org/package=saemix">saemix</a>.
 <strong>varTestnlme</strong> can be used to compare two nested models
 using likelihood ratio tests, where the variance of at least one random
 effect is tested equal to 0. Fixed effects can also be tested
 simultaneously, as well as covariances.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the packages</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(saemix)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(EnvStats)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Load the packages</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">library</span>(saemix)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">library</span>(EnvStats)</span></code></pre></div>
 <div id="linear-models" class="section level2">
 <h2>Linear models</h2>
 <p>Here we focus on models run using <strong>lme4</strong> and
@@ -371,57 +372,57 @@ random or not.</p>
 corresponding to <span class="math inline">\(H_1\)</span> and the null
 model corresponding to <span class="math inline">\(H_0\)</span>, where
 there is no random effect associated to <code>age</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Orthodont&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># using nlme, with correlated slope and intercept</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>m1.nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">random =</span> <span class="fu">pdSymm</span>(Subject <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> age), <span class="at">data =</span> Orthodont, <span class="at">method =</span> <span class="st">&quot;ML&quot;</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>m0.nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Subject, <span class="at">data =</span> Orthodont, <span class="at">method =</span> <span class="st">&quot;ML&quot;</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># using lme4, with correlated slope and intercept</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>m1.lme4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">|</span> Subject), <span class="at">data =</span> Orthodont, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model failed to converge with max|grad| = 0.0464695 (tol = 0.002, component 1)</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>m0.lme4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Subject), <span class="at">data =</span> Orthodont, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Orthodont&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># using nlme, with correlated slope and intercept</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>m1.nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">random =</span> <span class="fu">pdSymm</span>(Subject <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> age), <span class="at">data =</span> Orthodont, <span class="at">method =</span> <span class="st">&quot;ML&quot;</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>m0.nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Subject, <span class="at">data =</span> Orthodont, <span class="at">method =</span> <span class="st">&quot;ML&quot;</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co"># using lme4, with correlated slope and intercept</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>m1.lme4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">|</span> Subject), <span class="at">data =</span> Orthodont, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; Model failed to converge with max|grad| = 0.0464695 (tol = 0.002, component 1)</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>m0.lme4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Subject), <span class="at">data =</span> Orthodont, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>Now we can run the likelihood ratio test using the
 <strong>varTestnlme</strong> package. The function returns an object
 from S3 class <code>htest</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>vt1.nlme <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1.nlme,m0.nlme)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to age is equal to 0</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 0.8331072</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.5103454</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>vt1.lme4 <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1.lme4,m0.lme4)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to age is equal to 0</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 0.8326426</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.5104889</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>vt1.nlme <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1.nlme,m0.nlme)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to age is equal to 0</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;  LRT = 0.8331072</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.5103454</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>vt1.lme4 <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1.lme4,m0.lme4)</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to age is equal to 0</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt;  LRT = 0.8326426</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.5104889</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
 <p>Using the <code>EnvStats</code> package, nice printing options are
 available for objects of type <code>htest</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(vt1.nlme)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that:</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  variance of the random effect associated to age is equal to 0</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; against the alternative that:</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  variance of the random effect associated to age &gt; 0 </span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Likelihood ratio test statistic:</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT =  0.8331072</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  exact p-value: 0.5103454</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">print</span>(vt1.nlme)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; Testing that:</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt;  variance of the random effect associated to age is equal to 0</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; against the alternative that:</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;  variance of the random effect associated to age &gt; 0 </span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;  Likelihood ratio test statistic:</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt;  LRT =  0.8331072</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;  exact p-value: 0.5103454</span></span></code></pre></div>
 <p>It is also possible to access the components of the object using $ or
 [[:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>vt1.nlme<span class="sc">$</span>statistic</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       LRT </span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.8331072</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>vt1.nlme<span class="sc">$</span>p.value</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    pvalue.weights     pvalue.sample pvalue.lowerbound pvalue.upperbound </span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         0.5103454                NA         0.5103454         0.5103454</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>vt1.nlme<span class="sc">$</span>statistic</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt;       LRT </span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; 0.8331072</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>vt1.nlme<span class="sc">$</span>p.value</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt;    pvalue.weights     pvalue.sample pvalue.lowerbound pvalue.upperbound </span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt;         0.5103454                NA         0.5103454         0.5103454</span></span></code></pre></div>
 <p>For the p-value, four different values are provided:</p>
 <ol style="list-style-type: decimal">
 <li>the p-value computed using the chi-bar-square expression as a
@@ -442,28 +443,28 @@ weights, and thus the corresponding p-value is only available when
 <div id="case-2-testing-the-variance-of-one-effect-with-uncorrelated-random-effects" class="section level3">
 <h3>Case 2 : testing the variance of one effect with uncorrelated random
 effects</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using nlme, with uncorrelated slope and intercept</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>m1diag.nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">random =</span> <span class="fu">pdDiag</span>(Subject <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> age), <span class="at">data =</span> Orthodont, <span class="at">method =</span> <span class="st">&quot;ML&quot;</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># using lme4, with uncorrelated slope and intercept</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>m1diag.lme4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">||</span> Subject), <span class="at">data =</span> Orthodont, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>vt1diag.nlme <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.nlme,m0.nlme)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to age is equal to 0</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 0.5304105</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.2332172</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>vt1diag.lme4 <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.lme4,m0.lme4)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to age is equal to 0</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 0.5304106</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.2332171</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># using nlme, with uncorrelated slope and intercept</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>m1diag.nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">random =</span> <span class="fu">pdDiag</span>(Subject <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> age), <span class="at">data =</span> Orthodont, <span class="at">method =</span> <span class="st">&quot;ML&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># using lme4, with uncorrelated slope and intercept</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>m1diag.lme4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">||</span> Subject), <span class="at">data =</span> Orthodont, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>vt1diag.nlme <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.nlme,m0.nlme)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to age is equal to 0</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt;  LRT = 0.5304105</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.2332172</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>vt1diag.lme4 <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.lme4,m0.lme4)</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to age is equal to 0</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt;  LRT = 0.5304106</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.2332171</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
 </div>
 <div id="case-3-testing-all-the-variances" class="section level3">
 <h3>Case 3 : testing all the variances</h3>
@@ -482,111 +483,111 @@ of the Monte Carlo computation, <code>parallel</code> (default to
 <code>FALSE</code>) to specify whether computation should be
 parallelized, and <code>nbcores</code> (default to <code>1</code>) to
 set the number of cores to be used in case of parallel computing.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>m0noRE <span class="ot">&lt;-</span> <span class="fu">lm</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">data =</span> Orthodont)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>vt <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.nlme,m0noRE,<span class="at">pval.comp =</span> <span class="st">&quot;both&quot;</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the covariance matrix of Intercept and age is equal to 0</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 50.13311</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-value from estimated weights: 2.319657e-12</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bounds on p-value: lower 7.18311e-13 upper 7.215163e-12</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>vt2 <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.lme4,m0noRE)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the covariance matrix of (Intercept) and age is equal to 0</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 50.13311</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bounds on p-value: lower 7.18311e-13 upper 7.215163e-12</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>m0noRE <span class="ot">&lt;-</span> <span class="fu">lm</span>(distance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Sex <span class="sc">+</span> age <span class="sc">+</span> age<span class="sc">*</span>Sex, <span class="at">data =</span> Orthodont)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>vt <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.nlme,m0noRE,<span class="at">pval.comp =</span> <span class="st">&quot;both&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; Testing that the covariance matrix of Intercept and age is equal to 0</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt;  LRT = 50.13311</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; p-value from estimated weights: 2.319657e-12</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; bounds on p-value: lower 7.18311e-13 upper 7.215163e-12</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>vt2 <span class="ot">&lt;-</span> <span class="fu">varCompTest</span>(m1diag.lme4,m0noRE)</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; Testing that the covariance matrix of (Intercept) and age is equal to 0</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt;  LRT = 50.13311</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; bounds on p-value: lower 7.18311e-13 upper 7.215163e-12</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
 <p>By default, the FIM is extracted from the packages, but it is also
 possible to compute it via parametric bootstrap. In this case, simply
 use the option <code>fim=&quot;compute&quot;</code>. The default bootstrap
 sampling size is <code>B=1000</code> but it can be changed. To get the
 exact p-value one can use</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(m1diag.nlme, m0noRE, <span class="at">fim =</span> <span class="st">&quot;compute&quot;</span>, <span class="at">pval.comp =</span> <span class="st">&quot;both&quot;</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">B=</span><span class="dv">100</span>))</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(m1diag.lme4, m0noRE, <span class="at">fim =</span> <span class="st">&quot;compute&quot;</span>, <span class="at">pval.comp =</span> <span class="st">&quot;both&quot;</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">B=</span><span class="dv">100</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">varCompTest</span>(m1diag.nlme, m0noRE, <span class="at">fim =</span> <span class="st">&quot;compute&quot;</span>, <span class="at">pval.comp =</span> <span class="st">&quot;both&quot;</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">B=</span><span class="dv">100</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">varCompTest</span>(m1diag.lme4, m0noRE, <span class="at">fim =</span> <span class="st">&quot;compute&quot;</span>, <span class="at">pval.comp =</span> <span class="st">&quot;both&quot;</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">B=</span><span class="dv">100</span>))</span></code></pre></div>
 </div>
 </div>
 <div id="generalized-linear-model" class="section level2">
 <h2>Generalized linear model</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(<span class="fu">cbind</span>(incidence, size <span class="sc">-</span> incidence) <span class="sc">~</span> period <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> herd),</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> binomial, <span class="at">data =</span> cbpp)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(incidence, size <span class="sc">-</span> incidence) <span class="sc">~</span> period,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> binomial, <span class="at">data =</span> cbpp)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(m1,m0)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to (Intercept) is equal to 0</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 14.00527</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 9.114967e-05</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(<span class="fu">cbind</span>(incidence, size <span class="sc">-</span> incidence) <span class="sc">~</span> period <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> herd),</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>             <span class="at">family =</span> binomial, <span class="at">data =</span> cbpp)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>m0 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(incidence, size <span class="sc">-</span> incidence) <span class="sc">~</span> period,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>             <span class="at">family =</span> binomial, <span class="at">data =</span> cbpp)</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="fu">varCompTest</span>(m1,m0)</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to (Intercept) is equal to 0</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt;  LRT = 14.00527</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 9.114967e-05</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
 </div>
 <div id="nonlinear-model" class="section level2">
 <h2>Nonlinear model</h2>
 <p>Testing that one variance is equal to 0 in a model with two
 correlated random effects, using the Theophylline dataset and the nlme
 package.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># with nlme</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>fm1Theo.nlme <span class="ot">&lt;-</span> <span class="fu">nlme</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                     Theoph,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fixed =</span> lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">c</span>( <span class="sc">-</span><span class="fl">2.4</span>, <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">random =</span> <span class="fu">pdSymm</span>(lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>))</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>fm2Theo.nlme <span class="ot">&lt;-</span> <span class="fu">nlme</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                     Theoph,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fixed =</span> lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">c</span>( <span class="sc">-</span><span class="fl">2.4</span>, <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">random =</span> <span class="fu">pdDiag</span>(lCl <span class="sc">~</span> <span class="dv">1</span>))</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(fm1Theo.nlme,fm2Theo.nlme)</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to lKa is equal to 0</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 79.02084</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 3.773164e-18</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># with nlme</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>fm1Theo.nlme <span class="ot">&lt;-</span> <span class="fu">nlme</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>                     Theoph,</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>                     <span class="at">fixed =</span> lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">c</span>( <span class="sc">-</span><span class="fl">2.4</span>, <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>                     <span class="at">random =</span> <span class="fu">pdSymm</span>(lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>))</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>fm2Theo.nlme <span class="ot">&lt;-</span> <span class="fu">nlme</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>                     Theoph,</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>                     <span class="at">fixed =</span> lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">c</span>( <span class="sc">-</span><span class="fl">2.4</span>, <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>                     <span class="at">random =</span> <span class="fu">pdDiag</span>(lCl <span class="sc">~</span> <span class="dv">1</span>))</span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="fu">varCompTest</span>(fm1Theo.nlme,fm2Theo.nlme)</span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to lKa is equal to 0</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co">#&gt;  LRT = 79.02084</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 3.773164e-18</span></span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
 <p>Testing that one variance is null in a model with 3 correlated random
 effects, using the Theophylline dataset and the lme4 package.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># with lme4</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>Th.start  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">lKe =</span> <span class="sc">-</span><span class="fl">2.4</span>, <span class="at">lKa =</span> <span class="fl">0.45</span>, <span class="at">lCl =</span> <span class="sc">-</span><span class="fl">3.2</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>nm1  <span class="ot">&lt;-</span> <span class="fu">nlmer</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose , Time ,lKe , lKa , lCl) <span class="sc">~</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span><span class="sc">+</span>lKe<span class="sc">+</span>lKa<span class="sc">+</span>lCl <span class="sc">+</span>(lKe<span class="sc">+</span>lKa<span class="sc">+</span>lCl<span class="sc">|</span>Subject),</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">nAGQ=</span><span class="dv">0</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>              Theoph,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">start =</span> Th.start)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>nm0  <span class="ot">&lt;-</span> <span class="fu">nlmer</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose , Time ,lKe , lKa , lCl) <span class="sc">~</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span><span class="sc">+</span>lKe<span class="sc">+</span>lKa<span class="sc">+</span>lCl <span class="sc">+</span>(lKa<span class="sc">+</span>lCl<span class="sc">|</span>Subject),</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">nAGQ=</span><span class="dv">0</span>,</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>              Theoph,</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">start =</span> Th.start)</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(nm1,nm0)</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to lKe is equal to 0</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 2.043925</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.4616141</span></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># with lme4</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>Th.start  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">lKe =</span> <span class="sc">-</span><span class="fl">2.4</span>, <span class="at">lKa =</span> <span class="fl">0.45</span>, <span class="at">lCl =</span> <span class="sc">-</span><span class="fl">3.2</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>nm1  <span class="ot">&lt;-</span> <span class="fu">nlmer</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose , Time ,lKe , lKa , lCl) <span class="sc">~</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>                <span class="dv">0</span><span class="sc">+</span>lKe<span class="sc">+</span>lKa<span class="sc">+</span>lCl <span class="sc">+</span>(lKe<span class="sc">+</span>lKa<span class="sc">+</span>lCl<span class="sc">|</span>Subject),</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>              <span class="at">nAGQ=</span><span class="dv">0</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>              Theoph,</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>              <span class="at">start =</span> Th.start)</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>nm0  <span class="ot">&lt;-</span> <span class="fu">nlmer</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose , Time ,lKe , lKa , lCl) <span class="sc">~</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>                <span class="dv">0</span><span class="sc">+</span>lKe<span class="sc">+</span>lKa<span class="sc">+</span>lCl <span class="sc">+</span>(lKa<span class="sc">+</span>lCl<span class="sc">|</span>Subject),</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>              <span class="at">nAGQ=</span><span class="dv">0</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>              Theoph,</span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>              <span class="at">start =</span> Th.start)</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="fu">varCompTest</span>(nm1,nm0)</span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a><span class="co">#&gt; Testing that the variance of the random effect associated to lKe is equal to 0</span></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a><span class="co">#&gt;  LRT = 2.043925</span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a><span class="co">#&gt; p-value from exact weights: 0.4616141</span></span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
 <p>Testing for the presence of randomness in the model, using the nlme
 package.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fm1 <span class="ot">&lt;-</span> <span class="fu">nlme</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                     Theoph,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fixed =</span> lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">c</span>( <span class="sc">-</span><span class="fl">2.4</span>, <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">random =</span> <span class="fu">pdDiag</span>(lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>))</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>fm0 <span class="ot">&lt;-</span> <span class="fu">nls</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                     Theoph,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">list</span>(<span class="at">lKe=</span><span class="sc">-</span><span class="fl">2.4</span>,<span class="at">lKa=</span><span class="fl">0.45</span>,<span class="at">lCl=</span><span class="sc">-</span><span class="fl">3.2</span>))</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">varCompTest</span>(fm1,fm0)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Testing that the covariance matrix of lKe and lKa and lCl is equal to 0</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  LRT = 117.172</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bounds on p-value: lower 1.31613e-27 upper 1.748295e-25</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>fm1 <span class="ot">&lt;-</span> <span class="fu">nlme</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>                     Theoph,</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>                     <span class="at">fixed =</span> lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">c</span>( <span class="sc">-</span><span class="fl">2.4</span>, <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>                     <span class="at">random =</span> <span class="fu">pdDiag</span>(lKe <span class="sc">+</span> lKa <span class="sc">+</span> lCl <span class="sc">~</span> <span class="dv">1</span>))</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>fm0 <span class="ot">&lt;-</span> <span class="fu">nls</span>(conc <span class="sc">~</span> <span class="fu">SSfol</span>(Dose, Time, lKe, lKa, lCl),</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>                     Theoph,</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>                     <span class="at">start=</span><span class="fu">list</span>(<span class="at">lKe=</span><span class="sc">-</span><span class="fl">2.4</span>,<span class="at">lKa=</span><span class="fl">0.45</span>,<span class="at">lCl=</span><span class="sc">-</span><span class="fl">3.2</span>))</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="fu">varCompTest</span>(fm1,fm0)</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co">#&gt; Variance components testing in mixed effects models</span></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co">#&gt; Testing that the covariance matrix of lKe and lKa and lCl is equal to 0</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test statistic:</span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co">#&gt;  LRT = 117.172</span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="co">#&gt; bounds on p-value: lower 1.31613e-27 upper 1.748295e-25</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
 <p>We can see that there is no need to approximate the weights of the
 chi-bar-square distribution since the bounds on the p-value are
 sufficient to reject the null hypothesis at any <code>classical</code>

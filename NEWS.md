@@ -1,4 +1,8 @@
-# varTestnlme 1.3.3
+# varTestnlme 1.3.5
+
+Add reference (doi number) for the associated JSS paper.
+
+# varTestnlme 1.3.4
 
 Add an export for function extractFIM.lme 
 

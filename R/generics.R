@@ -151,11 +151,12 @@ extractVarCov <- function(m){
 #' @param m a fitted model that will be used as the basis of the parametric bootstrap (providing the initial maximum
 #' likelihood estimate of the parameters and the modelling framework)
 #' @param B the size of the bootstrap sample
+#' @param seed a seed for the random generator
 #' @return the empirical covariance matrix of the parameter estimates obtained on the bootstrap sample
 #' @author Charlotte Baey <\email{charlotte.baey@univ-lille.fr}>
 #'
 #' @importFrom foreach %dopar%
 #' @export bootinvFIM
-bootinvFIM <- function(m,B=1000){
+bootinvFIM <- function(m,B=1000,seed=0){
   UseMethod("bootinvFIM",m)
 }

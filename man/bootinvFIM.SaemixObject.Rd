@@ -4,12 +4,14 @@
 \alias{bootinvFIM.SaemixObject}
 \title{Compute the inverse of the Fisher Information Matrix using parametric bootstrap}
 \usage{
-\method{bootinvFIM}{SaemixObject}(m, B = 1000)
+\method{bootinvFIM}{SaemixObject}(m, B = 1000, seed = 0)
 }
 \arguments{
 \item{m}{the model under H1}
 
 \item{B}{the bootstrap sample size}
+
+\item{seed}{a seed for the random generator}
 }
 \description{
 Compute the inverse of the Fisher Information Matrix using parametric bootstrap

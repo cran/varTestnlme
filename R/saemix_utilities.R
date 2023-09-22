@@ -130,9 +130,10 @@ extractStruct.SaemixObject <- function(m1,m0,randm0){
 #'
 #' @param m the model under H1
 #' @param B the bootstrap sample size
+#' @param seed a seed for the random generator
 #' @export bootinvFIM.SaemixObject
 #' @export
-bootinvFIM.SaemixObject <- function(m, B=1000){
+bootinvFIM.SaemixObject <- function(m, B=1000, seed=0){
   
   simul <- saemix::simul.saemix(m,nsim=B)
   m.data <- m@data

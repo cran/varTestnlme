@@ -277,9 +277,10 @@ extractVarCov.lme <- function(m){
 #'
 #' @param m the model under H1
 #' @param B the bootstrap sample size
+#' @param seed a seed for the random generator
 #' @export bootinvFIM.lme
 #' @export
-bootinvFIM.lme <- function(m, B=1000){
+bootinvFIM.lme <- function(m, B=1000, seed=0){
   
   mySumm <- function(m,diagSigma=F) {
     beta <- nlme::fixef(m)
@@ -296,11 +297,14 @@ bootinvFIM.lme <- function(m, B=1000){
   nonlin <- inherits(m,"nlme")
   
   if (!nonlin){
+    message(paste0("\t ...generating the B=",B," bootstrap samples ...\n"))
     success <- F
+    set.seed(seed)
     while(!success){
       bootstrap <- try(lmeresampler::bootstrap(m, mySumm, B = B, type = "parametric"),silent=TRUE)
       success <- !inherits(bootstrap,"try-error")
       if (!success){
+        set.seed(seed)
         bootstrap <- try(lmeresampler::bootstrap(m, mySumm, B = B, type = "residual"),silent=TRUE)
         success <- !inherits(bootstrap,"try-error")
       }
@@ -405,6 +409,7 @@ bootinvFIM.lme <- function(m, B=1000){
     b <- 1
     tbar <- utils::txtProgressBar(min=1,max=B,char = ".", style = 3)
     grpVar <- m$groups[,1]
+    set.seed(seed)
     while (b <= B){  
       utils::setTxtProgressBar(tbar,b)
       phi <- t(chol(Sigma)%*%matrix(stats::rnorm(nrow(Sigma)*nind,0,1),ncol=nind))

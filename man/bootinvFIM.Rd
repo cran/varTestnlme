@@ -6,13 +6,15 @@
 \alias{bootstrap}
 \title{Approximation of the inverse of the Fisher Information Matrix via parametric bootstrap}
 \usage{
-bootinvFIM(m, B = 1000)
+bootinvFIM(m, B = 1000, seed = 0)
 }
 \arguments{
 \item{m}{a fitted model that will be used as the basis of the parametric bootstrap (providing the initial maximum
 likelihood estimate of the parameters and the modelling framework)}
 
 \item{B}{the size of the bootstrap sample}
+
+\item{seed}{a seed for the random generator}
 }
 \value{
 the empirical covariance matrix of the parameter estimates obtained on the bootstrap sample

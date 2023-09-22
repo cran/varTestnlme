@@ -151,9 +151,10 @@ extractVarCov.merMod <- function(m){
 #'
 #' @param m the model under H1
 #' @param B the bootstrap sample size
+#' @param seed a seed for the random generator
 #' @export bootinvFIM.merMod
 #' @export
-bootinvFIM.merMod <- function(m, B=1000){
+bootinvFIM.merMod <- function(m, B=1000, seed=0){
   
   mySumm <- function(m,diagSigma=F) {
     beta <- lme4::fixef(m)
@@ -176,6 +177,7 @@ bootinvFIM.merMod <- function(m, B=1000){
     
     message(paste0("\t ...generating the B=",B," bootstrap samples ...\n"))
     
+    set.seed(seed)
     bootstrap <- lme4::bootMer(m, mySumm, use.u = F, type = "parametric", nsim = B)
     bootstrap <- bootstrap$t[, colSums(bootstrap$t != 0) > 0]
     invfim <- cov(bootstrap)
@@ -208,6 +210,7 @@ bootinvFIM.merMod <- function(m, B=1000){
     tbar <- utils::txtProgressBar(min=1,max=B,char = ".", style = 3)
     grpVar <- m@frame[,grpFactor]
     nmeInd <- unique(grpVar)
+    set.seed(seed)
     while (b <= B){  
       utils::setTxtProgressBar(tbar,b)      
       phi <- t(t(chol(Sigma))%*%matrix(stats::rnorm(nrandEfft*nind,0,1),ncol=nind))
